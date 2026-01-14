@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>مركز الاسترداد - محاكاة</title>
+  <style>
+    :root{ --bg:#1f2225; --card:#2b2f33; --accent:#f2b739; --muted:#9aa0a6; }
+    *{box-sizing:border-box;font-family:'Segoe UI',Tahoma,Arial,sans-serif}
+    body{margin:0;background:linear-gradient(180deg,#161719 0%, #1f2225 100%);
+      color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .wrap{width:100%;max-width:420px}
+    .header{background:linear-gradient(180deg,rgba(255,255,255,0.03),transparent);
+      padding:18px;border-radius:12px;text-align:center}
+    .logo{width:64px;height:64px;background:#111;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;font-weight:700;margin:0 auto}
+    .title{font-size:20px;font-weight:700;margin-top:10px}
+    .source{font-size:14px;color:var(--muted);margin-top:6px}
+    .card{background:var(--card);padding:18px;border-radius:12px;margin-top:12px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.5)}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input[type=text], select{width:100%;padding:12px;border-radius:8px;
+      border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff}
+    select option{color:#111}
+    .captcha{display:flex;align-items:center;gap:10px}
+    .captcha-box{background:#eef2f3;color:#111;padding:8px 12px;border-radius:6px;
+      font-weight:700;letter-spacing:4px}
+    .btn{display:inline-block;padding:14px;border-radius:10px;background:var(--accent);
+      color:#111;font-weight:700;text-align:center;width:100%;cursor:pointer;margin-top:14px;border:0}
+    .success{background:linear-gradient(90deg,rgba(40,180,99,0.15),rgba(40,180,99,0.06));
+      border:1px solid rgba(40,180,99,0.2);color:#b9f1c8;padding:10px;border-radius:8px;margin-top:10px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="logo">PUBG</div>
+      <div class="title">مركز الاسترداد (محاكاة)</div>
+      <div class="source">المصدر من موقع <strong>ميداس باي (midasbuy.com)</strong></div>
+    </div>
+
+    <div class="card">
+      <div>
+        <label>معرّف اللاعب (Player ID)</label>
+        <input id="playerId" type="text" placeholder="اكتب Player ID" />
+      </div>
+
+      <div style="margin-top:12px">
+        <label>اختر عدد الشدات (US)</label>
+        <select id="redeemCode">
+          <option value="">اختر القيمة</option>
+          <option value="30 US">30 US</option>
+          <option value="60 US">60 US</option>
+          <option value="325 US">325 US</option>
+          <option value="660 US">660 US</option>
+          <option value="1800 US">1800 US</option>
+          <option value="3900 US">3900 US</option>
+        </select>
+      </div>
+
+      <div style="margin-top:12px">
+        <label>رمز التحقق</label>
+        <div class="captcha">
+          <input id="verifyInput" type="text" placeholder="اكتب رمز التحقق" style="width:110px;" />
+          <div class="captcha-box" id="captchaBox">0000</div>
+          <button id="refreshCaptcha" class="btn" style="width:auto;padding:8px 12px;font-size:14px;">تحديث 🔄</button>
+        </div>
+      </div>
+
+      <button id="redeemAction" class="btn">استرداد</button>
+
+      <div id="messageArea"></div>
+    </div>
+  </div>
+
+  <script>
+    const captchaBox = document.getElementById('captchaBox');
+    const refreshCaptcha = document.getElementById('refreshCaptcha');
+    const redeemAction = document.getElementById('redeemAction');
+    const messageArea = document.getElementById('messageArea');
+
+    function newCaptcha() {
+      const n = Math.floor(Math.random() * 9000) + 1000;
+      captchaBox.textContent = n;
+    }
+    newCaptcha();
+    refreshCaptcha.addEventListener('click', newCaptcha);
+
+    redeemAction.addEventListener('click', () => {
+      const id = document.getElementById('playerId').value.trim();
+      const code = document.getElementById('redeemCode').value.trim();
+      const v = document.getElementById('verifyInput').value.trim();
+      messageArea.innerHTML = '';
+
+      if (!id) return showMsg('رجاءً اكتب معرّف اللاعب.');
+      if (!code) return showMsg('رجاءً اختر عدد الشدات.');
+      if (!v) return showMsg('رجاءً اكتب رمز التحقق.');
+      if (v !== captchaBox.textContent) return showMsg('رمز التحقق غير صحيح.');
+
+      const el = document.createElement('div');
+      el.className = 'success';
+      el.textContent = 'تم وصول الشدات! ✅ تم استلام الطلب إلى حسابك.';
+      messageArea.appendChild(el);
+
+      document.getElementById('playerId').value = '';
+      document.getElementById('redeemCode').value = '';
+      document.getElementById('verifyInput').value = '';
+      newCaptcha();
+    });
+
+    function showMsg(txt) {
+      const e = document.createElement('div');
+      e.style.background = 'rgba(255,255,255,0.03)';
+      e.style.padding = '10px';
+      e.style.borderRadius = '8px';
+      e.style.marginTop = '10px';
+      e.textContent = txt;
+      messageArea.appendChild(e);
+    }
+  </script>
+</body>
+  </html>
